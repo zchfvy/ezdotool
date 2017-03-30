@@ -1,0 +1,9 @@
+
+# Here is some task
+> ls ~/
+
+# Soem other task
+> ps -a
+
+# Third task
+> less +F /var/log/syslog
