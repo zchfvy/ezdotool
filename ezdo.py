@@ -4,11 +4,17 @@ import subprocess
 import signal
 import sys
 
+pallete = [
+    ('command', 'light red', 'black'),
+    ('descr', 'light gray', 'black'),
+    ]
+
 
 class Section(object):
     def __init__(self):
         self.fulltext = ""
         self.commands = []
+        self.markuptext = []
 
 
 def parse_script(lines):
@@ -38,6 +44,9 @@ def parse_script(lines):
 
         if line[0] == '>':
             curr_sect.commands.append(line[1:].strip())
+            curr_sect.markuptext.append(('command', line + '\n'))
+        if line[0] == '#':
+            curr_sect.markuptext.append(('descr', line + '\n'))
 
     return sections
 
@@ -45,7 +54,7 @@ def parse_script(lines):
 def menu(sections):
     body = []
     for sect in sections:
-        button = urwid.Button(sect.fulltext)
+        button = urwid.Button(sect.markuptext)
         urwid.connect_signal(button, 'click', execute, sect.commands)
         body.append(button)
     return urwid.ListBox(urwid.SimpleFocusListWalker(body))
@@ -73,4 +82,4 @@ with open('ezdofile') as f:
     lines = f.readlines()
     script = parse_script(lines)
 
-urwid.MainLoop(menu(script)).run()
+urwid.MainLoop(menu(script), pallete).run()
