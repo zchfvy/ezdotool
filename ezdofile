@@ -1,9 +1,12 @@
 
+: ls
 # Here is some task
 > ls ~/
 
+: ps
 # Soem other task
 > ps -a
 
+: less
 # Third task
 > less +F /var/log/syslog

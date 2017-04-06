@@ -7,6 +7,7 @@ import sys
 pallete = [
     ('command', 'light red', 'black'),
     ('descr', 'light gray', 'black'),
+    ('name', 'light green', 'black'),
     ]
 
 
@@ -47,6 +48,9 @@ def parse_script(lines):
             curr_sect.markuptext.append(('command', line + '\n'))
         if line[0] == '#':
             curr_sect.markuptext.append(('descr', line + '\n'))
+        if line[0] == ':':
+            curr_sect.name = line[1:].strip()
+            curr_sect.markuptext.append(('name', line + '\n'))
 
     return sections
 
@@ -70,16 +74,26 @@ signal.signal(signal.SIGINT, signal_handler)
 
 
 def execute(button, command):
+    exec_cmd(command)
+    raise urwid.ExitMainLoop()
+
+def exec_cmd(command):
     global proc
     for cmd in command:
         # args = [os.environ["SHELL"], '-i', '-c', cmd]
         proc = subprocess.Popen(cmd, shell=True)
         proc.wait()
-    raise urwid.ExitMainLoop()
-
 
 with open('ezdofile') as f:
     lines = f.readlines()
     script = parse_script(lines)
 
-urwid.MainLoop(menu(script), pallete).run()
+if len(sys.argv) > 1:
+    cmd = sys.argv[1]
+    section = next((s for s in script if s.name == cmd), None)
+    if section:
+        exec_cmd(section.commands)
+    else:
+        print("Unknown command '{}'".format(cmd))
+else:
+    urwid.MainLoop(menu(script), pallete).run()
