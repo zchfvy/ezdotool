@@ -8,6 +8,7 @@ pallete = [
     ('command', 'light red', 'black'),
     ('descr', 'light gray', 'black'),
     ('name', 'light green', 'black'),
+    ('comment', 'dark gray', ''),
     ]
 
 
@@ -51,6 +52,8 @@ def parse_script(lines):
         if line[0] == ':':
             curr_sect.name = line[1:].strip()
             curr_sect.markuptext.append(('name', line + '\n'))
+        else:
+            curr_sect.markuptext.append(('comment', line + '\n'))
 
     return sections
 
@@ -58,9 +61,14 @@ def parse_script(lines):
 def menu(sections):
     body = []
     for sect in sections:
-        button = urwid.Button(sect.markuptext)
-        urwid.connect_signal(button, 'click', execute, sect)
-        body.append(button)
+        if sect.commands:
+            button = urwid.Button(sect.markuptext)
+            urwid.connect_signal(button, 'click', execute, sect)
+            body.append(button)
+        else:
+            label = urwid.Text(sect.markuptext)
+            body.append(label)
+
     return urwid.ListBox(urwid.SimpleFocusListWalker(body))
 
 
