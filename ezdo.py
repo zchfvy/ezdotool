@@ -12,6 +12,9 @@ pallete = [
     ]
 
 
+# -- Core --
+
+
 class Section(object):
     def __init__(self):
         self.fulltext = ""
@@ -72,6 +75,9 @@ def menu(sections):
     return urwid.ListBox(urwid.SimpleFocusListWalker(body))
 
 
+# -- Proces Management --
+
+
 proc = None
 cmd = None
 
@@ -95,16 +101,23 @@ def exec_cmd(command):
         proc = subprocess.Popen(cmd, shell=True)
         proc.wait()
 
-with open('ezdofile') as f:
-    lines = f.readlines()
-    script = parse_script(lines)
+# -- Main --
 
-if len(sys.argv) > 1:
-    cmd = sys.argv[1]
-else:
-    urwid.MainLoop(menu(script), pallete).run()
-section = next((s for s in script if s.name == cmd), None)
-if section:
-    exec_cmd(section.commands)
-else:
-    print("Unknown command '{}'".format(cmd))
+
+def main():
+    with open('ezdofile') as f:
+        lines = f.readlines()
+        script = parse_script(lines)
+
+    if len(sys.argv) > 1:
+        cmd = sys.argv[1]
+    else:
+        urwid.MainLoop(menu(script), pallete).run()
+    section = next((s for s in script if s.name == cmd), None)
+    if section:
+        exec_cmd(section.commands)
+    else:
+        print("Unknown command '{}'".format(cmd))
+
+if __name__ == '__main__':
+    main()
