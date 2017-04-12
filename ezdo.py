@@ -5,14 +5,32 @@ import signal
 import sys
 
 pallete = [
-    ('command', 'light red', 'black'),
-    ('descr', 'light gray', 'black'),
-    ('name', 'light green', 'black'),
+    ('command', 'light red', ''),
+    ('command_s', 'light red', 'dark blue'),
+    ('descr', 'light gray', ''),
+    ('descr_s', 'light gray', 'dark blue'),
+    ('name', 'light green', ''),
+    ('name_s', 'light green', 'dark blue'),
     ('comment', 'dark gray', ''),
+    ('selected', '', 'dark blue')
     ]
+
+select_map = {
+    'command': 'command_s',
+    'descr': 'descr_s',
+    'name': 'name_s',
+    }
 
 
 # -- Core --
+
+
+class SectionButton(urwid.Button):
+    def __init__(self, caption, callback, callback_arg):
+        super(SectionButton, self).__init__("")
+        urwid.connect_signal(self, 'click', callback, callback_arg)
+        self._w = urwid.AttrMap(urwid.SelectableIcon(
+            caption, float('inf')), None, select_map)
 
 
 class Section(object):
@@ -65,14 +83,13 @@ def menu(sections):
     body = []
     for sect in sections:
         if sect.commands:
-            button = urwid.Button(sect.markuptext)
 
             def button_cb(button, command):
                 global cmd
                 cmd = command
                 raise urwid.ExitMainLoop()
 
-            urwid.connect_signal(button, 'click', button_cb, sect.commands)
+            button = SectionButton(sect.markuptext, button_cb, sect.commands)
             body.append(button)
         else:
             label = urwid.Text(sect.markuptext)
