@@ -66,7 +66,13 @@ def menu(sections):
     for sect in sections:
         if sect.commands:
             button = urwid.Button(sect.markuptext)
-            urwid.connect_signal(button, 'click', execute, sect)
+
+            def button_cb(button, command):
+                global cmd
+                cmd = command
+                raise urwid.ExitMainLoop()
+
+            urwid.connect_signal(button, 'click', button_cb, sect.commands)
             body.append(button)
         else:
             label = urwid.Text(sect.markuptext)
@@ -88,12 +94,6 @@ def signal_handler(signal, frame):
 signal.signal(signal.SIGINT, signal_handler)
 
 
-def execute(button, section):
-    global cmd
-    cmd = section.name
-    raise urwid.ExitMainLoop()
-
-
 def exec_cmd(command):
     global proc
     for cmd in command:
@@ -105,19 +105,21 @@ def exec_cmd(command):
 
 
 def main():
+    global cmd
     with open('ezdofile') as f:
         lines = f.readlines()
         script = parse_script(lines)
 
     if len(sys.argv) > 1:
-        cmd = sys.argv[1]
+        cmd_name = sys.argv[1]
+        section = next((s for s in script if s.name == cmd_name), None)
+        if section:
+            cmd = section.commands
+        else:
+            print("Unknown command '{}'".format(cmd))
     else:
         urwid.MainLoop(menu(script), pallete).run()
-    section = next((s for s in script if s.name == cmd), None)
-    if section:
-        exec_cmd(section.commands)
-    else:
-        print("Unknown command '{}'".format(cmd))
+    exec_cmd(cmd)
 
 if __name__ == '__main__':
     main()
