@@ -50,9 +50,9 @@ def parse_script(lines):
         if line[0] == '>':
             curr_sect.commands.append(line[1:].strip())
             curr_sect.markuptext.append(('command', line + '\n'))
-        if line[0] == '#':
+        elif line[0] == '#':
             curr_sect.markuptext.append(('descr', line + '\n'))
-        if line[0] == ':':
+        elif line[0] == ':':
             curr_sect.name = line[1:].strip()
             curr_sect.markuptext.append(('name', line + '\n'))
         else:
