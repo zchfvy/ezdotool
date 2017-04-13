@@ -38,6 +38,7 @@ class Section(object):
         self.fulltext = ""
         self.commands = []
         self.markuptext = []
+        self.name = None
 
 
 def parse_script(lines):
