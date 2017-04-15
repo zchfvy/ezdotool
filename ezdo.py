@@ -11,6 +11,8 @@ pallete = [
     ('descr_s', 'light gray', 'dark blue'),
     ('name', 'light green', ''),
     ('name_s', 'light green', 'dark blue'),
+    ('button', '', ''),
+    ('button_s', '', 'dark blue'),
     ('comment', 'dark gray', ''),
     ('selected', '', 'dark blue')
     ]
@@ -19,6 +21,7 @@ select_map = {
     'command': 'command_s',
     'descr': 'descr_s',
     'name': 'name_s',
+    'button': 'button_s',
     }
 
 
@@ -29,8 +32,11 @@ class SectionButton(urwid.Button):
     def __init__(self, caption, callback, callback_arg):
         super(SectionButton, self).__init__("")
         urwid.connect_signal(self, 'click', callback, callback_arg)
-        self._w = urwid.AttrMap(urwid.SelectableIcon(
-            caption, float('inf')), None, select_map)
+
+        txt = urwid.SelectableIcon(caption, float('inf'))
+        txt = urwid.AttrMap(txt, 'button', None)
+        txt = urwid.AttrMap(txt, None, select_map)
+        self._w = txt
 
 
 class Section(object):
