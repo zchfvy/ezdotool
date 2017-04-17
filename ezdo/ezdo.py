@@ -122,6 +122,7 @@ def exec_cmd(command):
     global proc
     for cmd in command:
         # args = [os.environ["SHELL"], '-i', '-c', cmd]
+        print('>>> \033[1m' + cmd + '\033[0m')
         proc = subprocess.Popen(cmd, shell=True)
         proc.wait()
 
