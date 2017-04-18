@@ -46,6 +46,19 @@ class Section(object):
         self.markuptext = []
         self.name = None
 
+    def add_text(self, style, text):
+        if self.fulltext:
+            self.fulltext += '\n'
+
+        self.fulltext += text
+
+        if self.markuptext:
+            # HACK : curse those immutable tuples!
+            last = self.markuptext[-1]
+            self.markuptext[-1] = (last[0], last[1] + '\n')
+
+        self.markuptext.append((style, text))
+
 
 def parse_script(lines):
     """
@@ -68,20 +81,16 @@ def parse_script(lines):
         if not line:
             continue
 
-        if curr_sect.fulltext:
-            curr_sect.fulltext += '\n'
-        curr_sect.fulltext += line
-
         if line[0] == '>':
             curr_sect.commands.append(line[1:].strip())
-            curr_sect.markuptext.append(('command', line + '\n'))
+            curr_sect.add_text('command', line)
         elif line[0] == '#':
-            curr_sect.markuptext.append(('descr', line + '\n'))
+            curr_sect.add_text('descr', line)
         elif line[0] == ':':
             curr_sect.name = line[1:].strip()
-            curr_sect.markuptext.append(('name', line + '\n'))
+            curr_sect.add_text('name', line)
         else:
-            curr_sect.markuptext.append(('comment', line + '\n'))
+            curr_sect.add_text('comment', line)
 
     return sections
 
