@@ -79,6 +79,9 @@ def parse_script(lines):
             curr_sect = Section()
 
         if not line:
+            new_sect = Section()
+            new_sect.add_text('', '')
+            sections.append(new_sect)
             continue
 
         if line[0] == '>':
