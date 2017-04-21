@@ -2,7 +2,7 @@ import subprocess
 import signal
 import sys
 
-import ui
+from ezdo import ui
 
 
 # -- Core --

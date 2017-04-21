@@ -7,5 +7,6 @@ setup(name='ezdo',
       author='zchfvy',
       author_email='zchfvy@zchfvy.com',
       packages=['ezdo'],
-      scripts=['bin/ezdo']
+      scripts=['bin/ezdo'],
+      install_requires=['urwid']
       )
