@@ -3,11 +3,10 @@
 # Here is some task
 > ls ~/
 
-THis is an interstitial comment
-woohoo
+This is an interstitial comment
 
 : ps
-# Soem other task
+# Some other task
 > ps -a
 > echo "Done"
 
